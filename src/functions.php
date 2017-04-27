@@ -220,7 +220,8 @@ function reject(iterable $it, callable $predicate) : iterable
     }
 }
 
-function carry(callable $fn, ... $arguments) {
+function curry(callable $fn, ... $arguments)
+{
     $fn = \Closure::fromCallable($fn);
 
     $reflection = new \ReflectionFunction($fn);
@@ -232,4 +233,48 @@ function carry(callable $fn, ... $arguments) {
     return static function (... $args) use ($fn, $arguments) {
         return $fn(... $arguments, ... $args);
     };
+}
+
+function operator(string $operator) : callable
+{
+    switch ($operator) {
+        case '+':
+            return static function ($l, $r) {
+                return $l + $r;
+            };
+        case '-':
+            return static function ($l, $r) {
+                return $l - $r;
+            };
+        case '*':
+            return static function ($l, $r) {
+                return $l * $r;
+            };
+        case '/':
+            return static function ($l, $r) {
+                return $l / $r;
+            };
+        case '!':
+            return static function ($l) {
+                return !$l;
+            };
+        case '**':
+            return static function ($l, $r) {
+                return $l ** $r;
+            };
+        case '<=>':
+            return static function ($l, $r) {
+                return $l <=> $r;
+            };
+        case '?:':
+            return static function ($if, $then, $else) {
+                return $if ? $then : $else;
+            };
+        case '??':
+            return static function ($l, $r) {
+                return $l ?? $r;
+            };
+        default:
+            throw new \InvalidArgumentException('Unknown operator');
+    }
 }

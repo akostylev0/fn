@@ -2,6 +2,9 @@
 declare (strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use function func\{
+    map, to_array, to_iterator, range, curry, operator
+};
 
 class SimpleTest extends TestCase
 {
@@ -9,26 +12,26 @@ class SimpleTest extends TestCase
     {
         $in = [1, 2, 3];
 
-        $this->assertEquals($in, \func\to_array($in));
+        $this->assertEquals($in, to_array($in));
     }
 
     public function test_to_array_Iterator()
     {
         $in = [1, 2, 3];
 
-        $this->assertEquals($in, \func\to_array(new ArrayIterator($in)));
+        $this->assertEquals($in, to_array(new ArrayIterator($in)));
     }
 
     public function test_to_array_EmptyIterator()
     {
-        $this->assertEquals([], \func\to_array(new EmptyIterator()));
+        $this->assertEquals([], to_array(new EmptyIterator()));
     }
 
     public function test_to_iterator_Array()
     {
         $in = [1, 2, 3];
 
-        $iterator = \func\to_iterator($in);
+        $iterator = to_iterator($in);
 
         $this->assertThat($iterator, $this->isInstanceOf(Iterator::class));
         $this->assertEquals(iterator_to_array($iterator), $in);
@@ -38,7 +41,7 @@ class SimpleTest extends TestCase
     {
         $in = [1, 2, 3];
 
-        $iterator = \func\to_iterator(new ArrayIterator($in));
+        $iterator = to_iterator(new ArrayIterator($in));
 
         $this->assertThat($iterator, $this->isInstanceOf(Iterator::class));
         $this->assertEquals(iterator_to_array($iterator), $in);
@@ -48,7 +51,7 @@ class SimpleTest extends TestCase
     {
         $in = [1, 2, 3];
 
-        $iterator = \func\to_iterator(
+        $iterator = to_iterator(
             $this->iteratorAggregateForTraversable(new ArrayIterator($in))
         );
 
@@ -60,7 +63,7 @@ class SimpleTest extends TestCase
     {
         $in = [1, 2, 3];
 
-        $iterator = \func\to_iterator(
+        $iterator = to_iterator(
             $this->iteratorAggregateForTraversable(
                 $this->iteratorAggregateForTraversable(new ArrayIterator($in))
             )
@@ -78,7 +81,7 @@ class SimpleTest extends TestCase
         });
 
         $this->assertTrue(is_iterable($actual));
-        $this->assertEquals([], \func\to_array($actual));
+        $this->assertEquals([], to_array($actual));
     }
 
     public function test_map_Iterable()
@@ -90,7 +93,7 @@ class SimpleTest extends TestCase
         });
 
         $this->assertTrue(is_iterable($actual));
-        $this->assertEquals([1, 4, 9], \func\to_array($actual));
+        $this->assertEquals([1, 4, 9], to_array($actual));
     }
 
     public function test_map_IterableWithKeys()
@@ -102,7 +105,7 @@ class SimpleTest extends TestCase
         });
 
         $this->assertTrue(is_iterable($actual));
-        $this->assertEquals(['one' => 2], \func\to_array($actual));
+        $this->assertEquals(['one' => 2], to_array($actual));
     }
 
     public function test_apply_CallbackCalled()
@@ -142,7 +145,7 @@ class SimpleTest extends TestCase
             3 => 4,
             5 => 6,
             7 => 8
-        ], \func\to_array($actual));
+        ], to_array($actual));
     }
 
     public function test_reject_DivisionBy2()
@@ -158,14 +161,14 @@ class SimpleTest extends TestCase
             2 => 3,
             4 => 5,
             6 => 7
-        ], \func\to_array($actual));
+        ], to_array($actual));
     }
 
     public function test_chain_EmptyIteratables()
     {
         $actual = \func\chain([], new EmptyIterator(), $this->iteratorAggregateForTraversable(new EmptyIterator()));
 
-        $this->assertEquals([], \func\to_array($actual));
+        $this->assertEquals([], to_array($actual));
     }
 
     public function test_chain_Iteratables()
@@ -180,7 +183,7 @@ class SimpleTest extends TestCase
             'o' => 1,
             'a' => 3,
             'z' => 4
-        ], \func\to_array($actual));
+        ], to_array($actual));
     }
 
     public function test_all_GreaterThanZero_True()
@@ -219,7 +222,7 @@ class SimpleTest extends TestCase
             $this->iteratorAggregateForTraversable(new EmptyIterator())
         );
 
-        $this->assertEmpty(\func\to_array($actual));
+        $this->assertEmpty(to_array($actual));
     }
 
     public function test_zip_MinSize()
@@ -230,7 +233,7 @@ class SimpleTest extends TestCase
             $this->iteratorAggregateForTraversable(new EmptyIterator())
         );
 
-        $this->assertEmpty(\func\to_array($actual));
+        $this->assertEmpty(to_array($actual));
     }
 
     public function test_zip_Zipped()
@@ -241,51 +244,51 @@ class SimpleTest extends TestCase
             $this->iteratorAggregateForTraversable(new ArrayIterator([6, 7]))
         );
 
-        $this->assertEquals([[1, 4, 6], [2, 5, 7]], \func\to_array($actual));
+        $this->assertEquals([[1, 4, 6], [2, 5, 7]], to_array($actual));
     }
 
     public function test_range_Equals()
     {
-        $this->assertEquals([5], \func\to_array(\func\range(5, 5)));
+        $this->assertEquals([5], to_array(\func\range(5, 5)));
     }
 
     public function test_range_Increment()
     {
-        $this->assertEquals([1, 3, 5], \func\to_array(\func\range(1, 5, 2)));
+        $this->assertEquals([1, 3, 5], to_array(\func\range(1, 5, 2)));
     }
 
     public function test_range_IncrementGreaterThan0()
     {
         $this->expectException(InvalidArgumentException::class);
 
-        \func\range(1, 5, -2);
+        range(1, 5, -2);
     }
 
     public function test_range_Decrement()
     {
-        $this->assertEquals([5, 3, 1], \func\to_array(\func\range(5, 1, -2)));
+        $this->assertEquals([5, 3, 1], to_array(\func\range(5, 1, -2)));
     }
 
     public function test_flatten_simple()
     {
-        $this->assertEquals([1, 2, 3], \func\to_array(\func\flatten([1, 2, 3])));
+        $this->assertEquals([1, 2, 3], to_array(\func\flatten([1, 2, 3])));
     }
 
     public function test_flatten_DepthIsZero()
     {
-        $this->assertEquals([1, [2], 3], \func\to_array(\func\flatten([1, [2], 3], 0)));
+        $this->assertEquals([1, [2], 3], to_array(\func\flatten([1, [2], 3], 0)));
     }
 
     public function test_flatten_DepthIsTwo()
     {
-        $this->assertEquals([1, 2, 3], \func\to_array(\func\flatten([1, [2], [[3]]], 2)));
+        $this->assertEquals([1, 2, 3], to_array(\func\flatten([1, [2], [[3]]], 2)));
     }
 
     public function test_flatMap_Simple()
     {
         $this->assertEquals(
             ['q', 'w', 'e', 'z'],
-            \func\to_array(\func\flatMap(['q w', 'e z'], static function (string $str) : array {
+            to_array(\func\flatMap(['q w', 'e z'], static function (string $str) : array {
                 return explode(' ', $str);
             }))
         );
@@ -293,29 +296,40 @@ class SimpleTest extends TestCase
 
     public function test_take_Simple()
     {
-        $this->assertEquals([1, 2, 3], \func\to_array(\func\take(\func\range(1, 10), 3)));
-        $this->assertEquals([1, 2], \func\to_array(\func\take(\func\range(1, 2), 3)));
+        $this->assertEquals([1, 2, 3], to_array(\func\take(\func\range(1, 10), 3)));
+        $this->assertEquals([1, 2], to_array(\func\take(\func\range(1, 2), 3)));
     }
 
     public function test_drop_Simple()
     {
-        $this->assertEquals([4, 5], \func\to_array(\func\drop(\func\range(1, 5), 3)));
-        $this->assertEquals([], \func\to_array(\func\drop(\func\range(1, 2), 3)));
+        $this->assertEquals([4, 5], to_array(\func\drop(\func\range(1, 5), 3)));
+        $this->assertEquals([], to_array(\func\drop(\func\range(1, 2), 3)));
     }
 
     public function test_slice_Simple()
     {
-        $this->assertEquals([5, 6], \func\to_array(\func\slice(\func\range(1, 7), 4, 5)));
+        $this->assertEquals([5, 6], to_array(\func\slice(\func\range(1, 7), 4, 5)));
     }
 
-    public function test_curry() {
+    public function test_curry()
+    {
         $fn = static function (int $a, int $b) {
             return $a + $b;
         };
 
-        $carryFn = \func\carry($fn, 1);
+        $carryFn = curry($fn, 1);
 
         $this->assertEquals(2, $carryFn(1));
+    }
+
+    public function test_carry_operator()
+    {
+        $this->assertEquals(
+            [2, 4, 6, 8],
+            to_array(
+                map(range(1, 4), curry(operator('*'), 2))
+            )
+        );
     }
 
     private function iteratorAggregateForTraversable(Traversable $traversable)
