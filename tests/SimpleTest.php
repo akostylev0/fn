@@ -308,6 +308,16 @@ class SimpleTest extends TestCase
         $this->assertEquals([5, 6], \func\to_array(\func\slice(\func\range(1, 7), 4, 5)));
     }
 
+    public function test_curry() {
+        $fn = static function (int $a, int $b) {
+            return $a + $b;
+        };
+
+        $carryFn = \func\carry($fn, 1);
+
+        $this->assertEquals(2, $carryFn(1));
+    }
+
     private function iteratorAggregateForTraversable(Traversable $traversable)
     {
         return new class($traversable) implements IteratorAggregate

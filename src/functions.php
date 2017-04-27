@@ -219,3 +219,17 @@ function reject(iterable $it, callable $predicate) : iterable
         }
     }
 }
+
+function carry(callable $fn, ... $arguments) {
+    $fn = \Closure::fromCallable($fn);
+
+    $reflection = new \ReflectionFunction($fn);
+
+    if ($reflection->getNumberOfParameters() < count($arguments)) {
+        throw new \InvalidArgumentException('Too many arguments given');
+    }
+
+    return static function (... $args) use ($fn, $arguments) {
+        return $fn(... $arguments, ... $args);
+    };
+}
