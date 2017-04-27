@@ -210,3 +210,12 @@ function slice(iterable $it, int $start, int $end) : iterable
         $c++;
     }
 }
+
+function reject(iterable $it, callable $predicate) : iterable
+{
+    foreach ($it as $key => $value) {
+        if (!$predicate($value)) {
+            yield $key => $value;
+        }
+    }
+}

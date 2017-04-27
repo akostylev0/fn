@@ -145,6 +145,22 @@ class SimpleTest extends TestCase
         ], \func\to_array($actual));
     }
 
+    public function test_reject_DivisionBy2()
+    {
+        $in = range(1, 8);
+
+        $actual = \func\reject($in, static function (int $n): bool {
+            return $n % 2 === 0;
+        });
+
+        $this->assertEquals([
+            0 => 1,
+            2 => 3,
+            4 => 5,
+            6 => 7
+        ], \func\to_array($actual));
+    }
+
     public function test_chain_EmptyIteratables()
     {
         $actual = \func\chain([], new EmptyIterator(), $this->iteratorAggregateForTraversable(new EmptyIterator()));
