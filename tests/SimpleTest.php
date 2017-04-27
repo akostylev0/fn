@@ -275,6 +275,23 @@ class SimpleTest extends TestCase
         );
     }
 
+    public function test_take_Simple()
+    {
+        $this->assertEquals([1, 2, 3], \func\to_array(\func\take(\func\range(1, 10), 3)));
+        $this->assertEquals([1, 2], \func\to_array(\func\take(\func\range(1, 2), 3)));
+    }
+
+    public function test_drop_Simple()
+    {
+        $this->assertEquals([4, 5], \func\to_array(\func\drop(\func\range(1, 5), 3)));
+        $this->assertEquals([], \func\to_array(\func\drop(\func\range(1, 2), 3)));
+    }
+
+    public function test_slice_Simple()
+    {
+        $this->assertEquals([5, 6], \func\to_array(\func\slice(\func\range(1, 7), 4, 5)));
+    }
+
     private function iteratorAggregateForTraversable(Traversable $traversable)
     {
         return new class($traversable) implements IteratorAggregate

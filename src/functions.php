@@ -175,17 +175,38 @@ function flatMap(iterable $it, callable $fn) : iterable
     return flatten(map($it, $fn), 1);
 }
 
-function take(iterable $it, int $size) : iterable
+function take(iterable $it, int $count) : iterable
 {
-
+    foreach ($it as $value) {
+        if ($count > 0) {
+            $count--;
+            yield $value;
+        } else {
+            return;
+        }
+    }
 }
 
-function drop() : iterable
+function drop(iterable $it, int $count) : iterable
 {
-
+    foreach ($it as $value) {
+        if ($count > 0) {
+            $count--;
+        } else {
+            yield $value;
+        }
+    }
 }
 
-function slice() : iterable
+function slice(iterable $it, int $start, int $end) : iterable
 {
+    $c = 0;
 
+    foreach ($it as $value) {
+        if ($c >= $start && $c <= $end) {
+            yield $value;
+        }
+
+        $c++;
+    }
 }
