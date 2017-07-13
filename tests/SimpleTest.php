@@ -3,7 +3,7 @@ declare (strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use function func\{
-    map, to_array, to_iterator, curry, operator
+    map, to_array, to_iterator, curry, apply
 };
 
 class SimpleTest extends TestCase
@@ -77,7 +77,7 @@ class SimpleTest extends TestCase
     {
         $in = [];
 
-        $actual = \func\map($in, static function () {
+        $actual = map($in, static function () {
         });
 
         $this->assertTrue(is_iterable($actual));
@@ -88,7 +88,7 @@ class SimpleTest extends TestCase
     {
         $in = [1, 2, 3];
 
-        $actual = \func\map($in, static function (int $n): int {
+        $actual = map($in, static function (int $n): int {
             return $n ** 2;
         });
 
@@ -100,7 +100,7 @@ class SimpleTest extends TestCase
     {
         $in = ['one' => 1];
 
-        $actual = \func\map($in, static function (int $n): int {
+        $actual = map($in, static function (int $n): int {
             return $n * 2;
         });
 
@@ -113,7 +113,7 @@ class SimpleTest extends TestCase
         $in = [3];
 
         $called = false;
-        $actual = \func\apply($in, function () use (&$called) : void {
+        $actual = apply($in, function () use (&$called) : void {
             $called = true;
         });
 
@@ -318,16 +318,6 @@ class SimpleTest extends TestCase
         $carryFn = curry($fn, 1);
 
         $this->assertEquals(2, $carryFn(1));
-    }
-
-    public function test_carry_operator()
-    {
-        $this->assertEquals(
-            [2, 4, 6, 8],
-            to_array(
-                map(range(1, 4), curry(operator('*'), 2))
-            )
-        );
     }
 
     private function iteratorAggregateForTraversable(Traversable $traversable)
