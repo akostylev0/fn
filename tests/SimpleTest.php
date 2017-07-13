@@ -3,7 +3,7 @@ declare (strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use function func\{
-    map, to_array, to_iterator, range, curry, operator
+    map, to_array, to_iterator, curry, operator
 };
 
 class SimpleTest extends TestCase
@@ -113,7 +113,7 @@ class SimpleTest extends TestCase
         $in = [3];
 
         $called = false;
-        $actual = func\apply($in, function (int $n) use (&$called) : void {
+        $actual = \func\apply($in, function () use (&$called) : void {
             $called = true;
         });
 
@@ -259,14 +259,12 @@ class SimpleTest extends TestCase
 
     public function test_range_IncrementGreaterThan0()
     {
-        $this->expectException(InvalidArgumentException::class);
-
-        range(1, 5, -2);
+        $this->assertEquals([1, 3, 5], to_array(\func\range(1, 5, -2)));
     }
 
     public function test_range_Decrement()
     {
-        $this->assertEquals([5, 3, 1], to_array(\func\range(5, 1, -2)));
+        $this->assertEquals([5, 3, 1], to_array(\func\range(5, 1, 2)));
     }
 
     public function test_flatten_simple()

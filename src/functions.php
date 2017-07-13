@@ -124,29 +124,23 @@ function zip(iterable ... $iterables) : iterable
 function range(int $start, int $end, int $step = 1) : iterable
 {
     if ($start === $end) {
-        return (static function (int $n) : iterable {
-            yield $n;
-        })($start);
-    } elseif ($start < $end) {
-        if ($step <= 0) {
-            throw new \InvalidArgumentException('If start < end the step must be greater than 0');
+        yield $start;
+
+        return;
+    }
+
+    $step = abs($step);
+
+    if ($start < $end) {
+        for (; $start <= $end; $start += $step) {
+            yield $start;
         }
 
-        return (static function (int $start, int $end, int $step) : iterable {
-            for (; $start <= $end; $start += $step) {
-                yield $start;
-            }
-        })($start, $end, $step);
-    } else {
-        if ($step >= 0) {
-            throw new \InvalidArgumentException('If start > end the step must be less than 0');
-        }
+        return;
+    }
 
-        return (static function (int $start, int $end, int $step) : iterable {
-            for (; $start >= $end; $start += $step) {
-                yield $start;
-            }
-        })($start, $end, $step);
+    for (; $start >= $end; $start -= $step) {
+        yield $start;
     }
 }
 
