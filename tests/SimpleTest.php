@@ -2,7 +2,7 @@
 declare (strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use function func\{
+use function fn\{
     map, to_array, to_iterator, curry, apply
 };
 
@@ -125,7 +125,7 @@ class SimpleTest extends TestCase
     {
         $in = [2, 3, 4];
 
-        $actual = \func\reduce($in, 1, static function (int $n, int $accumulator): int {
+        $actual = \fn\reduce($in, 1, static function (int $n, int $accumulator): int {
             return $n + $accumulator;
         });
 
@@ -136,7 +136,7 @@ class SimpleTest extends TestCase
     {
         $in = range(1, 8);
 
-        $actual = \func\filter($in, static function (int $n): bool {
+        $actual = \fn\filter($in, static function (int $n): bool {
             return $n % 2 === 0;
         });
 
@@ -152,7 +152,7 @@ class SimpleTest extends TestCase
     {
         $in = range(1, 8);
 
-        $actual = \func\reject($in, static function (int $n): bool {
+        $actual = \fn\reject($in, static function (int $n): bool {
             return $n % 2 === 0;
         });
 
@@ -166,14 +166,14 @@ class SimpleTest extends TestCase
 
     public function test_chain_EmptyIteratables()
     {
-        $actual = \func\chain([], new EmptyIterator(), $this->iteratorAggregateForTraversable(new EmptyIterator()));
+        $actual = \fn\chain([], new EmptyIterator(), $this->iteratorAggregateForTraversable(new EmptyIterator()));
 
         $this->assertEquals([], to_array($actual));
     }
 
     public function test_chain_Iteratables()
     {
-        $actual = \func\chain(
+        $actual = \fn\chain(
             ['o' => 1],
             new ArrayIterator(['a' => 3]),
             $this->iteratorAggregateForTraversable(new ArrayIterator(['z' => 4]))
@@ -188,35 +188,35 @@ class SimpleTest extends TestCase
 
     public function test_all_GreaterThanZero_True()
     {
-        $this->assertTrue(\func\all([1, 2, 3], static function (int $n) : bool {
+        $this->assertTrue(\fn\all([1, 2, 3], static function (int $n) : bool {
             return $n > 0;
         }));
     }
 
     public function test_all_GreaterThanZero_False()
     {
-        $this->assertFalse(\func\all([1, -2, 3], static function (int $n) : bool {
+        $this->assertFalse(\fn\all([1, -2, 3], static function (int $n) : bool {
             return $n > 0;
         }));
     }
 
     public function test_any_GreaterThanZero_True()
     {
-        $this->assertTrue(\func\any([-1, 2, -3], static function (int $n) : bool {
+        $this->assertTrue(\fn\any([-1, 2, -3], static function (int $n) : bool {
             return $n > 0;
         }));
     }
 
     public function test_any_GreaterThanZero_False()
     {
-        $this->assertFalse(\func\any([-1, -2, -3], static function (int $n) : bool {
+        $this->assertFalse(\fn\any([-1, -2, -3], static function (int $n) : bool {
             return $n > 0;
         }));
     }
 
     public function test_zip_Empty()
     {
-        $actual = \func\zip(
+        $actual = \fn\zip(
             [],
             new EmptyIterator(),
             $this->iteratorAggregateForTraversable(new EmptyIterator())
@@ -227,7 +227,7 @@ class SimpleTest extends TestCase
 
     public function test_zip_MinSize()
     {
-        $actual = \func\zip(
+        $actual = \fn\zip(
             [1, 2, 3],
             new ArrayIterator([1, 2]),
             $this->iteratorAggregateForTraversable(new EmptyIterator())
@@ -238,7 +238,7 @@ class SimpleTest extends TestCase
 
     public function test_zip_Zipped()
     {
-        $actual = \func\zip(
+        $actual = \fn\zip(
             [1, 2, 3],
             new ArrayIterator([4, 5]),
             $this->iteratorAggregateForTraversable(new ArrayIterator([6, 7]))
@@ -249,44 +249,44 @@ class SimpleTest extends TestCase
 
     public function test_range_Equals()
     {
-        $this->assertEquals([5], to_array(\func\range(5, 5)));
+        $this->assertEquals([5], to_array(\fn\range(5, 5)));
     }
 
     public function test_range_Increment()
     {
-        $this->assertEquals([1, 3, 5], to_array(\func\range(1, 5, 2)));
+        $this->assertEquals([1, 3, 5], to_array(\fn\range(1, 5, 2)));
     }
 
     public function test_range_IncrementGreaterThan0()
     {
-        $this->assertEquals([1, 3, 5], to_array(\func\range(1, 5, -2)));
+        $this->assertEquals([1, 3, 5], to_array(\fn\range(1, 5, -2)));
     }
 
     public function test_range_Decrement()
     {
-        $this->assertEquals([5, 3, 1], to_array(\func\range(5, 1, 2)));
+        $this->assertEquals([5, 3, 1], to_array(\fn\range(5, 1, 2)));
     }
 
     public function test_flatten_simple()
     {
-        $this->assertEquals([1, 2, 3], to_array(\func\flatten([1, 2, 3])));
+        $this->assertEquals([1, 2, 3], to_array(\fn\flatten([1, 2, 3])));
     }
 
     public function test_flatten_DepthIsZero()
     {
-        $this->assertEquals([1, [2], 3], to_array(\func\flatten([1, [2], 3], 0)));
+        $this->assertEquals([1, [2], 3], to_array(\fn\flatten([1, [2], 3], 0)));
     }
 
     public function test_flatten_DepthIsTwo()
     {
-        $this->assertEquals([1, 2, 3], to_array(\func\flatten([1, [2], [[3]]], 2)));
+        $this->assertEquals([1, 2, 3], to_array(\fn\flatten([1, [2], [[3]]], 2)));
     }
 
     public function test_flatMap_Simple()
     {
         $this->assertEquals(
             ['q', 'w', 'e', 'z'],
-            to_array(\func\flatMap(['q w', 'e z'], static function (string $str) : array {
+            to_array(\fn\flatMap(['q w', 'e z'], static function (string $str) : array {
                 return explode(' ', $str);
             }))
         );
@@ -294,19 +294,19 @@ class SimpleTest extends TestCase
 
     public function test_take_Simple()
     {
-        $this->assertEquals([1, 2, 3], to_array(\func\take(\func\range(1, 10), 3)));
-        $this->assertEquals([1, 2], to_array(\func\take(\func\range(1, 2), 3)));
+        $this->assertEquals([1, 2, 3], to_array(\fn\take(\fn\range(1, 10), 3)));
+        $this->assertEquals([1, 2], to_array(\fn\take(\fn\range(1, 2), 3)));
     }
 
     public function test_drop_Simple()
     {
-        $this->assertEquals([4, 5], to_array(\func\drop(\func\range(1, 5), 3)));
-        $this->assertEquals([], to_array(\func\drop(\func\range(1, 2), 3)));
+        $this->assertEquals([4, 5], to_array(\fn\drop(\fn\range(1, 5), 3)));
+        $this->assertEquals([], to_array(\fn\drop(\fn\range(1, 2), 3)));
     }
 
     public function test_slice_Simple()
     {
-        $this->assertEquals([5, 6], to_array(\func\slice(\func\range(1, 7), 4, 5)));
+        $this->assertEquals([5, 6], to_array(\fn\slice(\fn\range(1, 7), 4, 5)));
     }
 
     public function test_curry()

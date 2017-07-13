@@ -1,7 +1,7 @@
 <?php
 declare (strict_types = 1);
 
-namespace func;
+namespace fn;
 
 use ArrayIterator;
 use Iterator;
@@ -102,7 +102,7 @@ function zip(iterable ... $iterables) : iterable
         return;
     }
 
-    $iterators = array_map('\func\to_iterator', $iterables);
+    $iterators = array_map('\fn\to_iterator', $iterables);
 
     for (apply($iterators, static function (Iterator $iterator) {
             $iterator->rewind();
